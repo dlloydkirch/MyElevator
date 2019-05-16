@@ -11,11 +11,12 @@ namespace MyElevator
     public class Elevator : IElevator<Elevator>
     {
 
-        static int currentFloor = 0;
-        static int nextFloorToVisit = 0;
-        static bool emergenyStop = false;
-        static List<int> floorsToVisit = new List<int>();
-        static bool doorClosed = false;
+        int currentFloor = 0;
+        int nextFloorToVisit = 0;
+        bool emergenyStop = false;
+        List<int> floorsToVisit = new List<int>();
+        bool doorClosed = false;
+        int capacity = 10;
 
         /// <summary>
         /// This method will pickup new passengers and check for capacity by calling the atCapacity method.
@@ -26,10 +27,12 @@ namespace MyElevator
         {
             doorClosed = false;
             int incomingPassengers = 0;
-            int capacity = 5;
+            numberOfPassengers += incomingPassengers;
             if (atCapacity(numberOfPassengers, capacity))
             {
-                numberOfPassengers += incomingPassengers;
+                Console.WriteLine("I'm sorry, the elevator is at capacity.");
+                doorClosed = true;
+                return numberOfPassengers - incomingPassengers;
             }
             doorClosed = true;
             return numberOfPassengers;
@@ -153,11 +156,9 @@ namespace MyElevator
 
             //Here I add floors to visit - can be as many or as few as wanted.
             floorsToVisit.Add(2);
-            floorsToVisit.Add(4);
-            floorsToVisit.Add(3);
             floorsToVisit.Add(6);
-            floorsToVisit.Add(1);
-            floorsToVisit.Add(10);
+            floorsToVisit.Add(3);
+            floorsToVisit.Add(9);
             //end adding floors to visit.
 
             while (floorsToVisit.Count() > 0)
