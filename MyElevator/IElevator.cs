@@ -9,7 +9,9 @@ namespace MyElevator
         void changeFloors();
         void doorControls();
         void buttonPanelControl();
-        void emergencyBrakes();
-
+        void emergencyBrakes(bool emergencyStop);
+        bool returnToHomeFloor(int numberOfPassengers);
+        int numberOfElevators();
+        bool atCapacity(int numberOfPassengers, int capacity);
     }
 }
