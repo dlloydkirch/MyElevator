@@ -5,45 +5,55 @@ using System.Linq;
 namespace MyElevator
 {
 
-    //This class implements the IElevator interface.
-    //It contains all methods and their implementation for the Elevator program.
-    //
+    /// <summary>
+    /// This class implements the IElevator interface to function like an elevator
+    /// </summary>
     public class Elevator : IElevator<Elevator>
     {
 
-        public int currentFloor;
-        public bool emergenyStop;
-        public List<int> floorsToVisit;
+        static int currentFloor = 0;
+        static int nextFloorToVisit = 0;
+        static bool emergenyStop = false;
+        static List<int> floorsToVisit = new List<int>();
+        static bool doorClosed = false;
 
+        /// <summary>
+        /// This method will pickup new passengers and check for capacity by calling the atCapacity method.
+        /// </summary>
+        /// <param name="numberOfPassengers"></param>
+        /// <returns></returns>
         public int pickupPassengers(int numberOfPassengers)
         {
+            doorClosed = false;
             int incomingPassengers = 0;
             int capacity = 5;
             if (atCapacity(numberOfPassengers, capacity))
             {
                 numberOfPassengers += incomingPassengers;
             }
+            doorClosed = true;
             return numberOfPassengers;
         }
 
-        public List<int> changeFloors(int currentFloor, int nextFloor)
+        /// <summary>
+        /// This method handles floor changes and calls the pickup paseenger method.
+        /// </summary>
+        /// <param name="currentFloor"></param>
+        /// <param name="nextFloor"></param>
+        /// <returns></returns>
+        public int changeFloors(int currentFloor, int nextFloor)
         {
             int numberOfPassengers = 0;
             currentFloor = nextFloor;
             pickupPassengers(numberOfPassengers);
-            floorsToVisit.Remove(currentFloor);
-            return floorsToVisit;
+            return currentFloor;
         }
 
-
-        public void doorControls()
-        {
-            bool openDoors = false;
-            if (openDoors)
-            {
-            }
-        }
-
+        /// <summary>
+        /// This method would apply the emergency braking on the elevator - preventing it from moving to another floor.
+        /// </summary>
+        /// <param name="emergencyStop"></param>
+        /// <returns></returns>
         public bool emergencyBrakes(bool emergencyStop)
         {
             if (emergenyStop)
@@ -58,9 +68,14 @@ namespace MyElevator
             return false;
         }
 
-        public bool returnToHomeFloor(int numberOfPassengers)
+        /// <summary>
+        /// This method indicates if the elevator should return to its home floor.
+        /// </summary>
+        /// <param name="numberOfFloorsToVisit"></param>
+        /// <returns></returns>
+        public bool returnToHomeFloor(int numberOfFloorsToVisit)
         {
-            if (numberOfPassengers == 0)
+            if (numberOfFloorsToVisit == 0)
             {
                 return true;
             }
@@ -70,11 +85,21 @@ namespace MyElevator
             }
         }
 
+        /// <summary>
+        /// This method could be implemented to contorl other button on the elevator button panel
+        /// </summary>
         public void buttonPanelControl()
         {
-
+            int pressedButton = 4;
+            floorsToVisit.Add(pressedButton);
         }
 
+        /// <summary>
+        /// This method checks if the elevator is at capacity
+        /// </summary>
+        /// <param name="numberOfPassengers"></param>
+        /// <param name="capacity"></param>
+        /// <returns></returns>
         public bool atCapacity(int numberOfPassengers, int capacity)
         {
             if (numberOfPassengers >= capacity)
@@ -87,22 +112,62 @@ namespace MyElevator
             }
         }
 
-        public void nextFloor(List<int>floorsToVisit)
+
+        /// <summary>
+        /// This method takes the list of floors to visit and returns the list with the visited floor removed.
+        /// </summary>
+        /// <param name="floorsToVisit"></param>
+        /// <returns></returns>
+        public List<int> nextFloor(List<int>floorsToVisit)
         {
             if (!emergencyBrakes(false))
             {
                 floorsToVisit = floorsToVisit.OrderBy(o => o).ToList();
-                changeFloors(floorsToVisit[0], floorsToVisit[1]);
+                if (floorsToVisit.Count > 0)
+                {
+                    currentFloor = floorsToVisit[0];
+                    Console.WriteLine("Visiting Floor - " + floorsToVisit[0]);
+                    if (floorsToVisit.Count > 1)
+                    {
+                        nextFloorToVisit = floorsToVisit[1];
+                    }
+                    else
+                    {
+                        nextFloorToVisit = 0;
+                    }
+                    currentFloor = changeFloors(currentFloor, nextFloorToVisit);
+                    floorsToVisit.Remove(floorsToVisit[0]);
+                }
             }
+            else
+            {
+                return new List<int>();
+            }
+            return floorsToVisit; // floorsToVisit;
         }
 
-        public void Main(string[] args)
+        public static void Main()
         {
+            Elevator elevator = new Elevator();
             List<int> floorsToVisit = new List<int>();
-            while (floorsToVisit.Count() >= 0)
+
+            //Here I add floors to visit - can be as many or as few as wanted.
+            floorsToVisit.Add(2);
+            floorsToVisit.Add(4);
+            floorsToVisit.Add(3);
+            floorsToVisit.Add(6);
+            floorsToVisit.Add(1);
+            floorsToVisit.Add(10);
+            //end adding floors to visit.
+
+            while (floorsToVisit.Count() > 0)
             {
-                nextFloor(floorsToVisit);
+                floorsToVisit = elevator.nextFloor(floorsToVisit);
+                elevator.returnToHomeFloor(floorsToVisit.Count);
             }
+            Console.WriteLine("Returing to home floor");
+
         }
+
     }
 }
