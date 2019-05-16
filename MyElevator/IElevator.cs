@@ -6,12 +6,12 @@ namespace MyElevator
 {
     public interface IElevator<T>
     {
-        void changeFloors();
+        List<int> changeFloors(int currentFloor, int nextFloor);
         void doorControls();
         void buttonPanelControl();
-        void emergencyBrakes(bool emergencyStop);
+        bool emergencyBrakes(bool emergencyStop);
         bool returnToHomeFloor(int numberOfPassengers);
-        int numberOfElevators();
         bool atCapacity(int numberOfPassengers, int capacity);
+        int pickupPassengers(int numberOfPassengers);
     }
 }

@@ -1,51 +1,61 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MyElevator
 {
+
+    //This class implements the IElevator interface.
+    //It contains all methods and their implementation for the Elevator program.
+    //
     public class Elevator : IElevator<Elevator>
     {
 
         public int currentFloor;
         public bool emergenyStop;
-        public int[] floorsToVisit;
+        public List<int> floorsToVisit;
 
-
-        public int numberOfElevators()
+        public int pickupPassengers(int numberOfPassengers)
         {
-            int numberOfElevators = 2;
-            return numberOfElevators;
+            int incomingPassengers = 0;
+            int capacity = 5;
+            if (atCapacity(numberOfPassengers, capacity))
+            {
+                numberOfPassengers += incomingPassengers;
+            }
+            return numberOfPassengers;
         }
 
-        public void changeFloors()
+        public List<int> changeFloors(int currentFloor, int nextFloor)
         {
-            if (floorsToVisit.Count() > 0)
-            {
-
-            }
+            int numberOfPassengers = 0;
+            currentFloor = nextFloor;
+            pickupPassengers(numberOfPassengers);
+            floorsToVisit.Remove(currentFloor);
+            return floorsToVisit;
         }
 
 
         public void doorControls()
         {
             bool openDoors = false;
-            bool closeDoors = false;
             if (openDoors)
             {
             }
         }
 
-        public void emergencyBrakes(bool emergencyStop)
+        public bool emergencyBrakes(bool emergencyStop)
         {
             if (emergenyStop)
             {
-                bool continueMoving = false;
                 bool callAuthorities = true;
                 if (callAuthorities)
                 {
-                    initiateResponse();
+                    return true;
                 }
+                return true;
             }
+            return false;
         }
 
         public bool returnToHomeFloor(int numberOfPassengers)
@@ -65,11 +75,6 @@ namespace MyElevator
 
         }
 
-        public void initiateResponse()
-        {
-
-        }
-
         public bool atCapacity(int numberOfPassengers, int capacity)
         {
             if (numberOfPassengers >= capacity)
@@ -81,6 +86,23 @@ namespace MyElevator
                 return false;
             }
         }
-    }
 
+        public void nextFloor(List<int>floorsToVisit)
+        {
+            if (!emergencyBrakes(false))
+            {
+                floorsToVisit = floorsToVisit.OrderBy(o => o).ToList();
+                changeFloors(floorsToVisit[0], floorsToVisit[1]);
+            }
+        }
+
+        public void Main(string[] args)
+        {
+            List<int> floorsToVisit = new List<int>();
+            while (floorsToVisit.Count() >= 0)
+            {
+                nextFloor(floorsToVisit);
+            }
+        }
+    }
 }
